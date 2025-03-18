@@ -25,6 +25,8 @@ export const useMessageStore = defineStore('message', (): UseMessageStoreReturn 
 
   const close = () => {
     open.value = false;
+    message.value = '';
+    type.value = 'info';
   };
 
   return {

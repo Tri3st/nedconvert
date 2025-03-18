@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {watch, ref, h} from "vue";
+import {watch, ref, h, computed} from "vue";
 import {ExclamationCircleOutlined, CheckCircleOutlined, InfoCircleOutlined} from "@ant-design/icons-vue";
 import type {ModalProps} from "ant-design-vue";
 
@@ -28,7 +28,7 @@ const handleCancel = () => {
   emit('update:open', false);
 }
 
-const getIcon = () => {
+const getIcon = computed(() => {
   switch (props.type) {
     case 'success':
       return CheckCircleOutlined;
@@ -39,9 +39,9 @@ const getIcon = () => {
     default:
       return InfoCircleOutlined;
   }
-}
+});
 
-const getTitle = () => {
+const getTitle = computed(() => {
   switch (props.type) {
     case 'success':
       return 'Success';
@@ -52,9 +52,9 @@ const getTitle = () => {
     default:
       return 'Info';
   }
-}
+})
 
-const getStyle = () => {
+const getStyle = computed(() => {
   switch (props.type) {
     case 'success':
       return { color: 'green' };
@@ -65,13 +65,20 @@ const getStyle = () => {
     default:
       return { color: 'blue'};
   }
-}
+});
+
+const titleVNode = computed(() => {
+  return h('span',
+      {style: getStyle.value },
+      [h(getIcon.value), getTitle.value]
+  );
+})
 </script>
 
 <template>
   <a-modal
     v-model:open="open"
-    :title="() => h('span', {style: getStyle() }, [h(getIcon()), getTitle()])"
+    :title="titleVNode"
     @ok="handleOk"
     :mask-closable="false"
     :closable="false"
