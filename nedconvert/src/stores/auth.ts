@@ -2,7 +2,7 @@
 
 import { defineStore } from 'pinia';
 import {createClient } from '@supabase/supabase-js';
-import {type Ref, ref, watch} from "vue";
+import {type Ref, ref } from "vue";
 
 const supabaseUrl: string = 'https://autsdpmpcxbqltteppib.supabase.co';
 const supabaseKey: string = import.meta.env.VITE_SUPABASE_KEY;

@@ -61,7 +61,7 @@ const loginUser = async () => {
     }
     resetForm();
   } catch (error) {
-    messageStore.show("Error logging in", "warning");
+    messageStore.show("There was an error logging in", "warning");
     console.log("Error logging in : ", error);
   }
 }

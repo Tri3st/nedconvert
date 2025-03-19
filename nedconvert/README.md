@@ -41,10 +41,59 @@ Learn more about the recommended Project Setup and IDE Support in the [Vue Docs 
                      - converts
     This can later be converted to a local postGres container for django, flask or fastAPI
 
-## STYLING 
+    At this moment the users password is sent to the db unencrypted. This is NOT what we want! md5 or SHA256 hash it and then send it.
 
-### Colors 
+## STYLING
 
-darkblue background : #00263A
+Try to use the colors from the example
+
+## Tech
+
+### Tech Stack
+
+* Vue3  [Documentation](https://vuejs.org/)
+* Vite [Documentation](https://vite.dev/)
+* Ant-Design-Vue [Documentation](https://www.antdv.com/)
+
+### Project Structure
+
+```markdown
+├── index.html
+├── package.json
+├── package-lock.json
+├── public
+│   └── vite.svg
+├── README.md
+├── src
+│   ├── App.vue
+│   ├── assets
+│   └── vue.svg
+│   ├── components
+│   ├── MenuBar.vue
+│   ├── MessageModal.vue
+│       └── UserInfo.vue
+│   ├── main.ts
+│   ├── router.ts
+│   ├── stores
+│   │   ├── auth.ts
+│   │   ├── convertHistory.ts
+│   │   ├── currency.ts
+│   │   └── message.ts
+│   ├── style.css
+│   ├── views
+│   │   ├── ConvertView.vue
+│   │   ├── CreateView.vue
+│   │   ├── GraphView.vue
+│   │   ├── HomeView.vue
+│   │   ├── LoginView.vue
+│   │   └── LogoutView.vue
+│   └── vite-env.d.ts
+├── tsconfig.app.json
+├── tsconfig.json
+├── tsconfig.node.json
+└── vite.config.ts
+
+```
+
 
 ##  TODO
