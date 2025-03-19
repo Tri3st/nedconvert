@@ -3,6 +3,11 @@ import { ref, type Ref } from 'vue';
 import axios from 'axios';
 import moment from 'moment';
 
+export interface Currency {
+    name: string;
+    symbol: string;
+}
+
 interface CurrencyRates {
     [key: string]: number;
 }
@@ -25,7 +30,7 @@ interface CurrencyState {
 
 type UseCurrencyStoreReturn = CurrencyState & {
     fetchRates: (baseCurrency?: string) => Promise<void>;
-    getCurrencies: () => string[];
+    getCurrencies: () => Currency[];
     getRate: (currency: string) => number | undefined;
     convert: (amount: number, from: string, to: string) => number | undefined;
     getCurrencyHistory: (baseCurrency: string, targetCurrency: string) => Promise<void>;
@@ -42,7 +47,7 @@ const options = {
 
 
 export const useCurrencyStore = defineStore('currency', (): UseCurrencyStoreReturn => {
-    const targetCurrencies: string[] = ['EUR', 'USD', 'GBP', 'INR', 'JPY', 'AUD']; // Added Australian Dollar (AUD) as the 6th currency
+    const targetCurrencies: Currency[] = [{name: 'EUR', symbol: '€'}, {name:'USD', symbol: '$'}, {name: 'GBP', symbol: '£'}, {name: 'INR', symbol:'₹'}, {name: 'JPY', symbol: '¥'}, {name: 'AUD', symbol: 'A$'}]; // Added Australian Dollar (AUD) as the 6th currency
     const rates: Ref<CurrencyRates> = ref({});
     const baseCurrency: Ref<string> = ref('EUR'); // Default base currency
     const loading: Ref<boolean> = ref(false);
@@ -61,13 +66,14 @@ export const useCurrencyStore = defineStore('currency', (): UseCurrencyStoreRetu
                 url: '/latest',
                 params: {
                     from: currentBaseCurrency,
-                    to: targetCurrencies.filter(currency => currency !== currentBaseCurrency).join(','),
+                    to: targetCurrencies.filter(currency => currency.name !== currentBaseCurrency).map(currency => currency.name).join(','),
                 },
             });
 
             if (response.data.rates) {
                 rates.value = response.data.rates;
                 baseCurrency.value = currentBaseCurrency;
+                // db_post(currentBaseCurrency, response.data.rates);
             } else {
                 throw new Error('Invalid response format');
             }

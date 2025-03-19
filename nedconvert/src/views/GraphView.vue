@@ -28,7 +28,7 @@ const createChart = (labels: string[], data: number[]) => {
           labels: labels,
           datasets: [
             {
-              label: `Exchange Rate (vs EUR)`,
+              label: `Exchange Rate ${props.currency} (vs EUR)`,
               data: data,
               borderColor: "rgb(75, 192, 192)",
               tension: 0.1,

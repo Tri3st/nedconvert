@@ -1,19 +1,19 @@
 <script setup lang="ts">
 import GraphView from "@/views/GraphView.vue";
-import {computed, type ComputedRef, reactive, type UnwrapRef} from "vue";
-import { useCurrencyStore } from "@/stores/currency.ts";
-
-
+import {computed, type ComputedRef, reactive, ref, type UnwrapRef} from "vue";
+import {useCurrencyStore} from "@/stores/currency.ts";
 
 interface FormState {
   layout: "horizontal" | "vertical" | "inline";
   selectFrom: string;
   selectTo: string;
-  inputFrom: 0.00,
-  inputTo: 0.00,
-  fromCurrencies: { value: string; label: string }[];
-  toCurrencies: ComputedRef<{ value: string; label: string }[]>;
+  inputFrom: number;
+  inputTo: number;
+  fromCurrencies: { value: string; label: string; symbol: string; }[];
+  toCurrencies: ComputedRef<{ value: string; label: string; symbol: string; }[]>;
 }
+
+const toInputRef = ref(null);
 
 const onFinish = () => {
   console.log("Finish!");
@@ -25,11 +25,11 @@ const onFinishFailed = () => {
 
 const useCurrency = useCurrencyStore();
 
-const computedToCurrencies = computed(() => {
+const computedToCurrencies: ComputedRef<{ value: string; label: string; symbol: string;}[]> = computed(() => {
   return (
     formState.fromCurrencies.filter(
       (curr) => curr.value !== formState.selectFrom,
-    ) || [{ value: "", label: "" }]
+    ) || [{ value: "", label: "", symbol: "" }]
   );
 });
 
@@ -41,69 +41,110 @@ const formState: UnwrapRef<FormState> = reactive<FormState>({
   inputTo: 0,
   fromCurrencies: useCurrency
     .getCurrencies()
-    .map((currency) => ({ value: currency, label: currency })),
-  toCurrencies: computedToCurrencies,
+    .map((currency) => ({ value: currency.name, label: currency.name, symbol: currency.symbol })),
+  toCurrencies: computedToCurrencies
 });
 
 const handleChange = (value: string) => {
   console.log(`selected ${value}`);
 };
+
+const onClick = () => {
+  const amount = useCurrency.convert(formState.inputFrom, formState.selectFrom, formState.selectTo) || 0;
+  formState.inputTo = Number(amount.toFixed(3));
+}
+
+const toSymbol = computed(() => {
+  return formState.toCurrencies.find((currency) => currency.value === formState.selectTo)?.symbol;
+});
+
+const fromSymbol = computed(() => {
+  return formState.fromCurrencies.find((currency) => currency.value === formState.selectFrom)?.symbol
+});
+
 </script>
 
 <template>
-  <a-flex vertical align="center" justify="center" gap="large">
+  <a-flex vertical align="center" justify="center" gap="large" class="currency-container">
     <a-typography-title>Convert View</a-typography-title>
     <a-form
-      :model="formState"
-      name="currencyForm"
-      @finish="onFinish"
-      @finishFailed="onFinishFailed"
+        :model="formState"
+        name="currencyForm"
+        @finish="onFinish"
+        @finishFailed="onFinishFailed"
     >
-      <a-flex>
-        <a-flex vertical>
-          <a-form-item label="From" name="fromCurrency">
+      <a-flex style="width: 100%">
+        <a-flex vertical class="currency-container">
+          <a-typography-title :level="3">FROM</a-typography-title>
+          <a-form-item name="fromCurrency" class="select">
             <a-select
-              v-model:value="formState.selectFrom"
-              style="width: 120px"
-              @change="handleChange"
+                v-model:value="formState.selectFrom"
+                style="width: 200px"
+                @change="handleChange"
             >
               <a-select-option
-                v-for="currency in formState.fromCurrencies"
-                :key="currency.value"
-                :value="currency.value"
-                :label="currency.label"
-                >{{ currency.label }}</a-select-option
-              >
+                  v-for="currency in formState.fromCurrencies"
+                  :key="currency.value"
+                  :value="currency.value"
+              >{{ currency.label }}</a-select-option>
             </a-select>
           </a-form-item>
-          <a-form-item label="From" name="fromInput">
-            <input type="number" id="fromInput" name="fromInput" />
+          <a-form-item name="fromInput">
+            <a-input
+                type="number"
+                id="fromInput"
+                name="fromInput"
+                style="width:200px"
+                v-model:value="formState.inputFrom"
+                :addon-before="fromSymbol"
+                :addon-after="formState.selectFrom"
+            />
           </a-form-item>
         </a-flex>
-        <a-flex vertical>
-          <a-form-item label="To" name="toCurrency">
+        <a-flex align="center" justify="center">
+          <a-button type="primary" size="large" @click="onClick">CONVERT ></a-button>
+        </a-flex>
+        <a-flex vertical align="start" class="currency-container">
+          <a-typography-title :level="3">TO</a-typography-title>
+          <a-form-item name="toCurrency" class="select">
             <a-select
-              v-model:value="formState.selectTo"
-              style="width: 120px"
-              @change="handleChange"
+                v-model:value="formState.selectTo"
+                style="width: 200px"
+                @change="handleChange"
             >
               <a-select-option
-                v-for="currencyTo in formState.toCurrencies"
-                :key="currencyTo.value"
-                :value="currencyTo.value"
-                :label="currencyTo.label"
-                >{{ currencyTo.label }}</a-select-option
-              >
+                  class="select"
+                  v-for="currencyTo in formState.toCurrencies"
+                  :key="currencyTo.value"
+                  :value="currencyTo.value"
+              >{{ currencyTo.label }}</a-select-option>
             </a-select>
           </a-form-item>
-          <a-form-item label="To" name="toInput">
-            <input type="number" id="toInput" name="toInput" />
+          <a-form-item name="toInput">
+            <a-input
+                class="currency-input-readonly"
+                type="number"
+                id="toInput"
+                name="toInput"
+                style="width:200px"
+                v-model:value="formState.inputTo"
+                :addon-before="toSymbol"
+                :addon-after="formState.selectTo"
+                :readonly="true"
+            />
           </a-form-item>
         </a-flex>
       </a-flex>
     </a-form>
-    <GraphView currency="USD" />
+    <GraphView :currency="formState.selectTo" />
   </a-flex>
 </template>
 
-<style scoped></style>
+<style scoped>
+.currency-container{
+  margin: 20px;
+}
+.currency-input-readonly {
+  cursor: default;
+}
+</style>
