@@ -1,30 +1,37 @@
 <script setup lang="ts">
 import GraphView from "@/views/GraphView.vue";
-import {computed, type ComputedRef, reactive, ref, type UnwrapRef} from "vue";
+import {computed, reactive } from "vue";
+import type {ComputedRef, UnwrapRef} from "vue";
 import {useCurrencyStore} from "@/stores/currency.ts";
 
+/** Interface for the currencies type */
+interface Currencies {
+  value: string;
+  label: string;
+  symbol: string;
+}
+
+/** Interface for the form state
+ *  layout: The layout of the form (horizontal, vertical, inline)
+ *  selectFrom: the selected 'from' currency code
+ *  selectTo: the selected 'to' currency code
+ *  fromCurrencies: An array of available 'from' currencies
+ *
+ *  */
 interface FormState {
   layout: "horizontal" | "vertical" | "inline";
   selectFrom: string;
   selectTo: string;
   inputFrom: number;
   inputTo: number;
-  fromCurrencies: { value: string; label: string; symbol: string; }[];
-  toCurrencies: ComputedRef<{ value: string; label: string; symbol: string; }[]>;
+  fromCurrencies: Currencies[];
+  toCurrencies: ComputedRef<Currencies[]>;
 }
 
-const toInputRef = ref(null);
-
-const onFinish = () => {
-  console.log("Finish!");
-};
-
-const onFinishFailed = () => {
-  console.log("Finish Failed!");
-};
-
+/** Use our currency store */
 const useCurrency = useCurrencyStore();
 
+/** A computed property to return the list of currencies with the selected 'from' currency removed */
 const computedToCurrencies: ComputedRef<{ value: string; label: string; symbol: string;}[]> = computed(() => {
   return (
     formState.fromCurrencies.filter(
@@ -33,6 +40,7 @@ const computedToCurrencies: ComputedRef<{ value: string; label: string; symbol: 
   );
 });
 
+/** Our formState */
 const formState: UnwrapRef<FormState> = reactive<FormState>({
   layout: "horizontal",
   selectFrom: 'EUR',
@@ -45,8 +53,18 @@ const formState: UnwrapRef<FormState> = reactive<FormState>({
   toCurrencies: computedToCurrencies
 });
 
+const onFinish = () => {
+  console.log("Finish!");
+};
+
+const onFinishFailed = () => {
+  console.log("Finish Failed!");
+};
+
 const handleChange = (value: string) => {
   console.log(`selected ${value}`);
+  formState.inputFrom = 0.00;
+  formState.inputTo = 0.00;
 };
 
 const onClick = () => {
