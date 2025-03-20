@@ -115,5 +115,5 @@ Try to use the colors from the example
 - We can choose to do the user and currency API in our own backend. In django or other backend
 - We need a better way of storing the user passwords. At the moment there is NO hashing-encryption, which is not really safe.
   - We could also choose a different way of managing user identities. (all-auth with django, 0auth, keycloak)
--
-  
+- The types are now all scattered in the various stores, we can gather them all in a separate folder. this is much cleaner.
+- 
