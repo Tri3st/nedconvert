@@ -11,7 +11,6 @@ const props = defineProps<{
 const emit = defineEmits(['update:open']);
 
 const open = ref<boolean>(false);
-const modalRef = ref<ModalProps | null>(null);
 
 watch(
   () => props.open,
@@ -80,6 +79,7 @@ const titleVNode = computed(() => {
     v-model:open="open"
     :title="titleVNode"
     @ok="handleOk"
+    @cancel="handleCancel"
     :mask-closable="false"
     :closable="false"
   >
