@@ -1,5 +1,18 @@
 # Vue 3 + TypeScript + Vite
 
+## Installation
+
+```bash
+# Installing
+npm install
+
+# Starting the development server (ignored when using docker or docker compose)
+npm run dev
+
+# Creating a project build (can be used to check typesript and other errors before merging)
+npm run build
+```
+
 This template should help get you started developing with Vue 3 and TypeScript in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
 
 Learn more about the recommended Project Setup and IDE Support in the [Vue Docs TypeScript Guide](https://vuejs.org/guide/typescript/overview.html#project-setup).
@@ -115,5 +128,5 @@ Try to use the colors from the example
 - We can choose to do the user and currency API in our own backend. In django or other backend
 - We need a better way of storing the user passwords. At the moment there is NO hashing-encryption, which is not really safe.
   - We could also choose a different way of managing user identities. (all-auth with django, 0auth, keycloak)
--
-  
+- The types are now all scattered in the various stores, we can gather them all in a separate folder. this is much cleaner.
+- 
