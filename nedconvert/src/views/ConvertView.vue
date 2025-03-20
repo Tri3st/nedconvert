@@ -94,7 +94,7 @@ const fromSymbol = computed(() => {
           @finish="onFinish"
           @finishFailed="onFinishFailed"
         >
-          <a-flex style="width: 100%" :gap="20" :vertical="false" :wrap="true" justify="center">
+          <a-flex style="width: 100%" :gap="20" :vertical="false" wrap="true" justify="center">
             <a-flex vertical class="currency-input-container">
               <a-typography-title :level="3" class="currency-input-label">FROM</a-typography-title>
               <a-form-item name="fromCurrency" class="select">
@@ -161,7 +161,7 @@ const fromSymbol = computed(() => {
       <ResultView
         :fromCurrency="formState.selectFrom"
         :toCurrency="formState.selectTo"
-        :fromAmount="formState.inputFrom"
+        :fromAmount="Number(formState.inputFrom)"
         :toAmount="formState.inputTo"
       />
       <GraphView :currency="formState.selectTo" />
@@ -171,10 +171,5 @@ const fromSymbol = computed(() => {
 </template>
 
 <style scoped>
-.currency-container{
-  margin: 20px;
-}
-.currency-input-readonly {
-  cursor: default;
-}
+
 </style>
