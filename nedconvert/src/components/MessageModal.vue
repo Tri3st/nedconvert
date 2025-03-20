@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import {watch, ref, h, computed} from "vue";
 import {ExclamationCircleOutlined, CheckCircleOutlined, InfoCircleOutlined} from "@ant-design/icons-vue";
-import type {ModalProps} from "ant-design-vue";
 
 const props = defineProps<{
   message: string;
