@@ -6,11 +6,15 @@ import type {MenuProps} from "ant-design-vue";
 import {useRouter} from "vue-router";
 import {useAuthStore} from "@/stores/auth.ts";
 
+/** Use the vue-router to get the current route */
 const router = useRouter();
+
+/** Use the auth store to get the current user */
 const authStore = useAuthStore();
 
+
 const current = ref<string[]>([router.currentRoute.value.path])
-const items = ref<MenuProps['items']>([
+const items = ref<MenuProps['items'] & { to: string }[]>([
   {
     key: 'makequote',
     icon: () => h(EditOutlined),
@@ -37,18 +41,21 @@ onMounted(async () => {
   await authStore.checkSession();
 
   if(!authStore.isAuthenticated()) {
-    router.push('/login');
+    await router.push('/login');
   }
 });
 </script>
 
 <template>
-  <a-flex gap="large" align="center" justify="space-between">
-    <a-menu v-model:selectedKeys="current" :items="items" mode="horizontal" @click="onMenuClick"/>
-    <UserInfo class="user-info" :user="currentUser?.username" :role="currentUser?.role" v-if="currentUser"/>
-    <a-button class="login-button" type="primary" ghost @click="router.push('/login')" v-else>LOGIN</a-button>
-  </a-flex>
-
+  <a-card class="neu-bar-card">
+    <a-flex gap="large" align="center" justify="space-between" class="menu-bar-container">
+      <a-menu v-model:selectedKeys="current" :items="items" mode="horizontal" @click="onMenuClick" class="menu-bar"/>
+      <a-flex align="center" gap="middle">
+        <UserInfo class="user-info" :user="currentUser?.username" :role="currentUser?.role" v-if="currentUser"/>
+        <a-button class="login-button" type="primary" ghost @click="router.push('/login')" v-else>LOGIN</a-button>
+      </a-flex>
+    </a-flex>
+  </a-card>
 </template>
 
 <style scoped>

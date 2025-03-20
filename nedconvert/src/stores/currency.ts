@@ -31,7 +31,7 @@ interface CurrencyState {
 type UseCurrencyStoreReturn = CurrencyState & {
     fetchRates: (baseCurrency?: string) => Promise<void>;
     getCurrencies: () => Currency[];
-    getRate: (currency: string) => number | undefined;
+    getRate: (from: string, to: string) => number | undefined;
     convert: (amount: number, from: string, to: string) => number | undefined;
     getCurrencyHistory: (baseCurrency: string, targetCurrency: string) => Promise<void>;
 };
@@ -89,31 +89,30 @@ export const useCurrencyStore = defineStore('currency', (): UseCurrencyStoreRetu
         return targetCurrencies;
     }
 
-    const getRate = (currency: string): number | undefined => {
-        if (currency === baseCurrency.value) {
+    const getRate = (from: string, to: string): number | undefined => {
+        if (from === to) {
             return 1;
         }
-        return rates.value[currency];
+        if (from === baseCurrency.value) {
+            return rates.value[to];
+        }
+        if (to === baseCurrency.value) {
+            return 1 / (rates.value[from] || 1)
+        }
+        return (1 / (rates.value[from] || 1)) * (rates.value[to] || 1)
     };
 
     const convert = (amount: number, from: string, to: string): number | undefined => {
         if (from === to) {
             return amount;
         }
-        const fromRate = getRate(from);
-        const toRate = getRate(to);
 
-        if (fromRate === undefined || toRate === undefined) {
+        const rate = getRate(from, to);
+
+        if (rate === undefined) {
             return undefined;
         }
-
-        if (from === baseCurrency.value) {
-            return amount * (toRate || 0);
-        }
-        if (to === baseCurrency.value) {
-            return amount / (fromRate || 0);
-        }
-        return (amount / (fromRate || 0)) * (toRate || 0);
+        return amount * rate;
     };
 
     const getCurrencyHistory = async (baseCurrency: string, targetCurrencyInput: string) => {

@@ -9,19 +9,21 @@ Learn more about the recommended Project Setup and IDE Support in the [Vue Docs 
 
 ### Main Screen with layout and images (top and bottom)
 
+LAYOUT:
+
     - Inlay with 
       - Two menu tabs
       - Login information - login will be done with supabase (free database)
       - center view
         - TOP
           - INPUT SECTION
-              - two input on the eft 
-                - type of currency
+              - two input on the left 
+                - type of currency (select)
                 - ammount
               - two inputs on the right 
-                - type of currency
-                - ammount
-              - symbol in the middle
+                - type of currency (select)
+                - ammount (read only)
+              - symbol in the middle to convert
           - RESULTS SECTION
             - result of currency exchange for the left
             - result of currency exchange for the right
@@ -95,5 +97,23 @@ Try to use the colors from the example
 
 ```
 
+### Packages
+
+- **Ant-design for Vue** [Documentation](https://www.antdv.com/)
+  - **Ant-design Icons for Vue** [Documentation](https://https://antdv.com/components/icon)
+- **Supabase Javascript Library** [Documentation](https://https://github.com/supabase/supabase-js)
+- **Axios** [Documentation](https://https://github.com/imcvampire/vue-axios#readme)
+- **Vue Chartjs** [Documentation](https://https://vue-chartjs.org/)
+  - **Chart.js** [Documentation](https://https://vue-chartjs.org/)
+- **Moment** [Documentation](https://https://momentjs.com/) Alternative is dayjs. Both good
+- **Pinia**  [Documentation](https://https://pinia.vuejs.org/)
 
 ##  TODO
+
+- whenever we get the rates to calculate a conversion, we could send the data to our database. This way we get a better
+    idea of what rates we used, when we calculated these and who calculated these.
+- We can choose to do the user and currency API in our own backend. In django or other backend
+- We need a better way of storing the user passwords. At the moment there is NO hashing-encryption, which is not really safe.
+  - We could also choose a different way of managing user identities. (all-auth with django, 0auth, keycloak)
+-
+  

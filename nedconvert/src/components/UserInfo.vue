@@ -6,11 +6,15 @@ import {useRouter} from "vue-router";
 const authStore = useAuthStore();
 const router = useRouter();
 
+/** Props for the UserInfo component,
+ *    user: the username
+ *    role: 'admin' or 'user' (from the db) */
 defineProps<{
   user: string;
   role: string;
 }>();
 
+/** Do th elogout magic */
 const logout = () => {
   authStore.logout();
   router.push("/login");
@@ -18,17 +22,17 @@ const logout = () => {
 </script>
 
 <template>
-  <a-flex :gap="4" align="center">
+  <a-flex :gap="4" align="center" class="user-info-container">
     <a-avatar :style="{'background-color': role === 'admin' ? 'red' : 'blue'}">
       <template #icon>
         <UserOutlined />
       </template>
     </a-avatar>
     <a-space :size="16"></a-space>
-    <div>
+    <div class="user-name">
       {{ user }}
     </div>
-    <a-button danger @click="logout">Logout</a-button>
+    <a-button @click="logout" class="logout-button">Logout</a-button>
   </a-flex>
 </template>
 
