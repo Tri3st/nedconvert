@@ -2,15 +2,20 @@
 import {watch, ref, h, computed} from "vue";
 import {ExclamationCircleOutlined, CheckCircleOutlined, InfoCircleOutlined} from "@ant-design/icons-vue";
 
+/** Props for the MessageModal component. the props are typed already */
 const props = defineProps<{
   message: string;
   type: 'success' | 'warning' | 'info';
   open: boolean;
 }>();
+
+/** Emitting the update:open event to the parent component */
 const emit = defineEmits(['update:open']);
 
+/** The open state of the modal using a vue ref */
 const open = ref<boolean>(false);
 
+/** Watching the open prop for changes and updating the open state of the modal accordingly */
 watch(
   () => props.open,
   (newOpen) => {
@@ -18,14 +23,17 @@ watch(
   }
 );
 
+/** Handlers for the modal OK button */
 const handleOk = () => {
   emit('update:open', false);
 };
 
+/** Handlers for the modal Cancel button */
 const handleCancel = () => {
   emit('update:open', false);
 }
 
+/** Computed property to return the icon based on the type prop */
 const getIcon = computed(() => {
   switch (props.type) {
     case 'success':
@@ -39,6 +47,7 @@ const getIcon = computed(() => {
   }
 });
 
+/** Computed property to return the title based on the type prop */
 const getTitle = computed(() => {
   switch (props.type) {
     case 'success':
@@ -52,6 +61,7 @@ const getTitle = computed(() => {
   }
 })
 
+/** Computed property to return the style based on the type prop */
 const getStyle = computed(() => {
   switch (props.type) {
     case 'success':
@@ -65,6 +75,7 @@ const getStyle = computed(() => {
   }
 });
 
+/** Computed property to return the titleVNode based on the type prop */
 const titleVNode = computed(() => {
   return h('span',
       {style: getStyle.value },
