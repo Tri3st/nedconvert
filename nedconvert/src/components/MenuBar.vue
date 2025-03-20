@@ -12,8 +12,10 @@ const router = useRouter();
 /** Use the auth store to get the current user */
 const authStore = useAuthStore();
 
-
+/** The current route path */
 const current = ref<string[]>([router.currentRoute.value.path])
+
+/** The menu items (we can add more later (features upon request) */
 const items = ref<MenuProps['items'] & { to: string }[]>([
   {
     key: 'makequote',
@@ -31,12 +33,16 @@ const items = ref<MenuProps['items'] & { to: string }[]>([
   },
 ])
 
+/** The current user from the auth store */
 const currentUser = computed(() => authStore.currentUser());
 
+/** onClick handler for the menu items */
 const onMenuClick: MenuProps['onClick'] = (e) => {
   router.push(e.item.to);  // Navigate to the selected route
 }
 
+/** When the component is mounted, we check for a session and check if the user is logged in
+ * If not we redirect to the login page */
 onMounted(async () => {
   await authStore.checkSession();
 

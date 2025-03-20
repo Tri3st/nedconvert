@@ -1,9 +1,8 @@
-// /home/martin/MyProjects/nedschroef/nedconvert/src/stores/auth.ts
-
 import { defineStore } from 'pinia';
 import {createClient } from '@supabase/supabase-js';
 import {type Ref, ref } from "vue";
 
+/** Supabase client credentials and configuration */
 const supabaseUrl: string = 'https://autsdpmpcxbqltteppib.supabase.co';
 const supabaseKey: string = import.meta.env.VITE_SUPABASE_KEY;
 const supabase = createClient(supabaseUrl, supabaseKey, {
@@ -14,6 +13,7 @@ const supabase = createClient(supabaseUrl, supabaseKey, {
   }
 });
 
+/** Auth store return types */
 type UseAuthStoreReturn = ErrorLoading & {
   user: Ref<User | null>;
   isLoggedIn: Ref<boolean | false>;
@@ -26,11 +26,13 @@ type UseAuthStoreReturn = ErrorLoading & {
   removeUser: () => void;
 };
 
+/** Error loading types */
 interface ErrorLoading {
   loading: Ref<boolean>;
   error: Ref<string | null>;
 }
 
+/** User types */
 export interface User {
   username: string;
   password?: string;
@@ -49,9 +51,13 @@ export const useAuthStore = defineStore('auth', (): UseAuthStoreReturn =>  {
 
     /* actions */
 
+    /** Check if the user is authenticated */
     const isAuthenticated = (): boolean => isLoggedIn.value;
+
+    /** Get the current user */
     const currentUser = (): User | null => user.value;
 
+    /** Do the actual logging in of the user and handle errors */
     const login = async (credentials: { user: string; pass: string }): Promise<void> => {
       loading.value = true;
       error.value = null;
@@ -84,6 +90,7 @@ export const useAuthStore = defineStore('auth', (): UseAuthStoreReturn =>  {
       }
     }
 
+    /** Do the logging out of the user and handle errors */
     const logout = async (): Promise<void> => {
       loading.value = true;
       error.value = null;
@@ -99,6 +106,7 @@ export const useAuthStore = defineStore('auth', (): UseAuthStoreReturn =>  {
       }
     }
 
+    /** Check if there is a user in local storage or session storage and handle errors */
     const checkSession = async (): Promise<void> => {
       loading.value = true;
       error.value = null;
@@ -118,11 +126,15 @@ export const useAuthStore = defineStore('auth', (): UseAuthStoreReturn =>  {
         loading.value = false;
       }
     }
+
+    /** Set the user and store it in local storage */
     const setUser = (newUser: User): void => {
       user.value = newUser;
       newUser.password = "************";
       localStorage.setItem('user', JSON.stringify(newUser));
     }
+
+    /** Remove the user and clear local storage */
     const removeUser = (): void => {
       user.value = null;
       localStorage.removeItem('user');

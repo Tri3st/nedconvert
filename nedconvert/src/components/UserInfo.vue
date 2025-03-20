@@ -14,7 +14,7 @@ defineProps<{
   role: string;
 }>();
 
-/** Do th elogout magic */
+/** Do the logout magic */
 const logout = () => {
   authStore.logout();
   router.push("/login");

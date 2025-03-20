@@ -54,33 +54,38 @@ const formState: UnwrapRef<FormState> = reactive<FormState>({
   toCurrencies: computedToCurrencies
 });
 
+/** onFinish handler for the form. NOT IMPLEMENTED YET */
 const onFinish = () => {
   console.log("Finish!");
 };
 
+/** onFinishFailed handler for the form. NOT IMPLEMENTED YET */
 const onFinishFailed = () => {
   console.log("Finish Failed!");
 };
 
+/** handleChange handler for the select. NOT IMPLEMENTED YET only logs the values. but does clear the input fields */
 const handleChange = (value: string) => {
   console.log(`selected ${value}`);
   formState.inputFrom = 0.00;
   formState.inputTo = 0.00;
 };
 
+/** onClick handler for the convert button. */
 const onClick = () => {
   const amount = useCurrency.convert(formState.inputFrom, formState.selectFrom, formState.selectTo) || 0;
   formState.inputTo = Number(amount.toFixed(3));
 }
 
+/** toSymbol computed property to return the symbol of the selected 'to' currency */
 const toSymbol = computed(() => {
   return formState.toCurrencies.find((currency) => currency.value === formState.selectTo)?.symbol;
 });
 
+/** fromSymbol computed property to return the symbol of the selected 'from' currency */
 const fromSymbol = computed(() => {
   return formState.fromCurrencies.find((currency) => currency.value === formState.selectFrom)?.symbol
 });
-
 </script>
 
 <template>

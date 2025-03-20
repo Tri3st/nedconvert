@@ -3,21 +3,25 @@ import { ref, type Ref } from 'vue';
 import axios from 'axios';
 import moment from 'moment';
 
+/** Currency types */
 export interface Currency {
     name: string;
     symbol: string;
 }
 
+/** Currency rates types */
 interface CurrencyRates {
     [key: string]: number;
 }
 
+/** Currency history types */
 interface CurrencyHistory {
     [date: string]: {
         [currency: string]: number;
     };
 }
 
+/** Currency store return types */
 interface CurrencyState {
     rates: Ref<CurrencyRates>;
     baseCurrency: Ref<string>;
@@ -28,6 +32,7 @@ interface CurrencyState {
     historyError: Ref<string | null>;
 }
 
+/** Currency store resturn types */
 type UseCurrencyStoreReturn = CurrencyState & {
     fetchRates: (baseCurrency?: string) => Promise<void>;
     getCurrencies: () => Currency[];
@@ -36,6 +41,7 @@ type UseCurrencyStoreReturn = CurrencyState & {
     getCurrencyHistory: (baseCurrency: string, targetCurrency: string) => Promise<void>;
 };
 
+/** RapidAPI options and configuration */
 const options = {
     method: 'GET',
     baseURL: 'https://currency-conversion-and-exchange-rates.p.rapidapi.com',
@@ -47,6 +53,8 @@ const options = {
 
 
 export const useCurrencyStore = defineStore('currency', (): UseCurrencyStoreReturn => {
+    /** Our currencies. For now we have chosen 8. The most common ones. But this can be changed at will.
+     * Maybe we can even make it dynamic. Choose your own currencies and symbols. (admin settings maybe? */
     const targetCurrencies: Currency[] = [{name: 'EUR', symbol: '€'}, {name:'USD', symbol: '$'}, {name: 'GBP', symbol: '£'}, {name: 'INR', symbol:'₹'}, {name: 'JPY', symbol: '¥'}, {name: 'AUD', symbol: 'A$'}]; // Added Australian Dollar (AUD) as the 6th currency
     const rates: Ref<CurrencyRates> = ref({});
     const baseCurrency: Ref<string> = ref('EUR'); // Default base currency
@@ -56,6 +64,8 @@ export const useCurrencyStore = defineStore('currency', (): UseCurrencyStoreRetu
     const historyLoading: Ref<boolean> = ref(false);
     const historyError: Ref<string | null> = ref(null);
 
+    /** Fetch currency rates from RapidAPI and handle errors
+     * TODO add the rates to our DB to keep track of the rates and the users who used them */
     const fetchRates = async (newBaseCurrency?: string) => {
         loading.value = true;
         error.value = null;
@@ -85,10 +95,12 @@ export const useCurrencyStore = defineStore('currency', (): UseCurrencyStoreRetu
         }
     };
 
+    /** Return the currencies */
     const getCurrencies = () => {
         return targetCurrencies;
     }
 
+    /** get the rate between two currencies */
     const getRate = (from: string, to: string): number | undefined => {
         if (from === to) {
             return 1;
@@ -102,6 +114,7 @@ export const useCurrencyStore = defineStore('currency', (): UseCurrencyStoreRetu
         return (1 / (rates.value[from] || 1)) * (rates.value[to] || 1)
     };
 
+    /**  */
     const convert = (amount: number, from: string, to: string): number | undefined => {
         if (from === to) {
             return amount;
@@ -115,6 +128,8 @@ export const useCurrencyStore = defineStore('currency', (): UseCurrencyStoreRetu
         return amount * rate;
     };
 
+    /** Fetch currency history from RapidAPI and handle errors
+     * This is the timeseries data that we show in the chartjs graph */
     const getCurrencyHistory = async (baseCurrency: string, targetCurrencyInput: string) => {
         historyLoading.value = true;
         historyError.value = null;

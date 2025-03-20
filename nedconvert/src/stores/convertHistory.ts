@@ -5,6 +5,7 @@ import { ref, type Ref } from 'vue';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { type User } from './auth';
 
+/** Supabase client credentials and configuration */
 const supabaseUrl: string = 'https://autsdpmpcxbqltteppib.supabase.co';
 const supabaseKey: string = import.meta.env.VITE_SUPABASE_KEY;
 const supabase: SupabaseClient = createClient(supabaseUrl, supabaseKey, {
@@ -15,6 +16,7 @@ const supabase: SupabaseClient = createClient(supabaseUrl, supabaseKey, {
   },
 });
 
+/** Convert types */
 export interface Convert {
   id: number;
   user_id: string;
@@ -26,22 +28,26 @@ export interface Convert {
   user?: User; // Optional user data from the join
 }
 
+/** Convert history types */
 interface ConvertHistoryState {
   converts: Ref<Convert[]>;
   loading: Ref<boolean>;
   error: Ref<string | null>;
 }
 
+/** Convert history store return types */
 type UseConvertHistoryStoreReturn = ConvertHistoryState & {
   fetchConvertHistory: () => Promise<void>;
   addConvert: (convert: Omit<Convert, 'id' | 'created_at'>) => Promise<void>;
 };
 
+/** Convert history store */
 export const useConvertHistoryStore = defineStore('convertHistory', (): UseConvertHistoryStoreReturn => {
   const converts: Ref<Convert[]> = ref([]);
   const loading: Ref<boolean> = ref(false);
   const error: Ref<string | null> = ref(null);
 
+  /** Fetch convert history from Supabase */
   const fetchConvertHistory = async (): Promise<void> => {
     loading.value = true;
     error.value = null;
@@ -66,6 +72,7 @@ export const useConvertHistoryStore = defineStore('convertHistory', (): UseConve
     }
   };
 
+  /** Add a new convert to Supabase */
   const addConvert = async (convert: Omit<Convert, 'id' | 'created_at'>): Promise<void> => {
     loading.value = true;
     error.value = null;
