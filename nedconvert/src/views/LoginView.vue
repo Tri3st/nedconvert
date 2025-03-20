@@ -5,22 +5,32 @@ import {useAuthStore} from "@/stores/auth.ts";
 import {useRouter} from "vue-router";
 import {useMessageStore} from "@/stores/message.ts";
 
+/** Use the auth store to get the current user */
 const authStore = useAuthStore();
+
+/** Use the message store to show messages to the user */
 const messageStore = useMessageStore();
+
+/** Use the vue-router to navigate to other pages */
 const router = useRouter();
 
+/** FommState types */
 interface FormState {
   user: string;
   pass: string;
 }
 
+/** formRef state by using a ref */
 const formRef = ref<any>();
 
+/** formState state by using a reactive object
+ * We use a formState to keep track of the values of the inputs */
 const formState = reactive<FormState>({
   user: '',
   pass: ''
 });
 
+/** Check if the username is valid according to our rules */
 const validUsername = (_rule: Rule, value: string) => {
   if (!value) {
     return Promise.reject('Please provide a username');
@@ -31,6 +41,8 @@ const validUsername = (_rule: Rule, value: string) => {
     return Promise.resolve();
   }
 }
+
+/** Check if the password is valid according to our rules */
 const validPassword = (_rule: Rule, value: string) => {
   if (!value) {
     return Promise.reject('Please provide a password');
@@ -43,11 +55,13 @@ const validPassword = (_rule: Rule, value: string) => {
   }
 }
 
+/** The rules of the form, see documentation of ant-design-vue for more information */
 const rules: Record<string, Rule[]> ={
   pass: [{required:true, validator: validPassword, trigger: 'change'}],
   user: [{required:true, validator: validUsername, trigger: 'change'}]
 }
 
+/** Try to log the user in and handle errors */
 const loginUser = async () => {
   try {
     await formRef.value.validate();
@@ -55,7 +69,7 @@ const loginUser = async () => {
     await authStore.login(formState);
     if (authStore.isAuthenticated()) {
       messageStore.show("You are logged in", "success");
-      router.push("/");
+      await router.push("/");
     } else {
       messageStore.show("Invalid username or password", "warning");
     }
@@ -66,16 +80,16 @@ const loginUser = async () => {
   }
 }
 
-
+/** Reset the form state to empty strings */
 const resetForm = () => {
   formState.user = '';
   formState.pass = '';
 };
 
+/** watch the formState for changes and clear the validation errors */
 watch(formState, () => {
   formRef.value?.clearValidate();
 })
-
 </script>
 
 <template>
