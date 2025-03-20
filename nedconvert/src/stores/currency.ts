@@ -40,7 +40,7 @@ const options = {
     method: 'GET',
     baseURL: 'https://currency-conversion-and-exchange-rates.p.rapidapi.com',
     headers: {
-        'x-rapidapi-key': '4818d58474mshfa58051704203bap18cfe1jsnac1a729ed8c6',
+        'x-rapidapi-key': import.meta.env.VITE_RAPIDAPI_KEY,
         'x-rapidapi-host': 'currency-conversion-and-exchange-rates.p.rapidapi.com',
     },
 };
